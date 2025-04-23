@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<PreserveCompilationContext>true</PreserveCompilationContext>	
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Templates\ASM.cshtml" />
+    <None Remove="Templates\_Layout.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Templates\ASM.cshtml" />
+    <EmbeddedResource Include="Templates\_Layout.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Haukcode.WkHtmlToPdfDotNet" Version="1.5.95" />
+    <PackageReference Include="NPoco.SqlServer" Version="5.7.1" />
+    <PackageReference Include="RazorLight" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <Generator></Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

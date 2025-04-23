@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Person": {
+      "commandName": "Project",
+      "commandLineArgs": "LAS Eclipse Person -PER"
+    },
+    "SingleDoc": {
+      "commandName": "Project",
+      "commandLineArgs": "LAS Eclipse Document -int"
+    },
+    "DocumentArchiver": {
+      "commandName": "Project",
+      "commandLineArgs": "LAS Eclipse Document"
+    }
+  }
+}

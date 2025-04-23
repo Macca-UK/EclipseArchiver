@@ -1,0 +1,223 @@
+﻿@*Template for Assessments*@
+@{
+    Layout = "_Layout.cshtml";
+}
+@model DocumentArchiver.Source.Assessments.Model.Assessment
+@using DocumentArchiver.Helpers
+
+@{
+    ViewBag.Title = Model.GetFileName();
+}
+<div class="container">
+    <div class="header">
+        <div class="title">
+            <h2>@Model.ClientName</h2>
+            <h2>@Model.Title</h2>
+        </div>
+        <div class="logo"></div>
+    </div>
+
+    <div class="clear"></div>
+
+    <table class="nobreak">
+        <tbody>
+            <tr>
+                <th class="section-header" colspan="6"><h3>Person Details</h3></th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td colspan="3">@Model.ClientName</td>
+                <th>Eclipse ID</th>
+                <td>@Model.PartyId</td>
+            </tr>
+@*            <tr>
+                <th>Address</th>
+                <td colspan="3">@Model.ClientAddress</td>
+                <th>Telephone</th>
+                <td>@Model.ClientTelephone</td>
+            </tr>  *@
+            <tr>
+                <th>DoB / EDD</th>
+                <td>@Model.ClientBirthDate.ToFormattedDate()</td>
+                <th>Age</th>
+                <td>@Model.ClientAge</td>
+                <th>Gender</th>
+                <td>@Model.ClientGender</td>
+            </tr>
+        </tbody>
+    </table>
+    <table>
+        <tbody>
+            <tr>
+                <th class="section-header" colspan="6"><h3>Form Details</h3></th>
+            </tr>
+            <tr>
+                <th>Start Date</th>
+                <td>@Model.StartDate.ToFormattedDate()</td>
+                <th>Activity Date</th>
+                <td>@Model.ActivityDate.ToFormattedDate()</td>
+                <th>Form ID</th>
+                <td>@Model.AssessmentId</td>
+            </tr>
+@*          <tr>
+                <th>Priority</th>
+                <<td>@Model.AssessmentPriority</td> 
+                <th>Outcome</th>
+                @if (String.IsNullOrWhiteSpace(Model.OutcomeReason))
+                {
+                    <td colspan="3">@Model.Outcome</td>
+                }
+                else
+                {
+                    <td>@Model.Outcome</td>
+                    <th>Reason</th>
+                    <td>@Model.OutcomeReason</td>
+                } 
+                
+            </tr> *@
+            <tr>
+@*              <th>Worker ID</th>
+                <td>@Model.WorkerId</td> *@
+                <th>Worker Name</th>
+                <td colspan="3">@Model.WorkerName</td>
+                <th>Team</th>
+                <td>@Model.WorkerTeam</td>
+            </tr>
+            @if (!string.IsNullOrWhiteSpace(Model.SubmittedByName))
+            {
+                <tr>
+@*              <th>Sumbitted By ID</th>
+                <td>@Model.SubmittedById</td> *@
+                    <th>Submitted By Name</th>
+                    <td colspan="3">@Model.SubmittedByName</td>
+                    <th>Submitted Date</th>
+                    <td>@Model.SubmittedDate.ToFormattedDate()</td>
+                </tr>
+            }
+            <tr>
+                <th>Completed by Name</th>
+                <td>@Model.CompletedByName</td>
+                <th>Completed by Team</th>
+                <td>@Model.CompletedByTeam</td>
+                <th>Completed date</th>
+                <td>@Model.CompletedDate.ToFormattedDateTime()</td>
+            </tr>
+@*             @if (Model.IsAuthorisationRequired)
+            {
+                <tr>
+                    <th>Authorised by ID</th>
+                    <td>@Model.AuthorisedById</td>
+                    <th>Authorised by Name</th>
+                    <td>@Model.AuthorisedByName</td>
+                    <th>Authorised date</th>
+                    <td>@Model.AuthorisedDate.ToFormattedDateTime()</td>
+                </tr>
+                <tr>
+                    <th>Authorisation Notes</th>
+                    <td colspan="5">@Model.AuthorisationNotes</td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th>Authorisation</th>
+                    <td colspan="5">Not required</td>
+                </tr>
+            } *@
+@*             <tr>
+                <th>Data Sharing</th>
+                <td>@Model.DataSharing</td>
+                <th>Notes</th>
+                <td colspan="3">@Model.DataSharingNotes</td>
+            </tr> *@
+        </tbody>
+    </table>
+    @foreach (var sect in Model.Sections)
+    {
+
+        <table class="nobreak">
+            <tbody>
+                <tr>
+                    <th class="section-header"><h3>@sect.Title</h3></th>
+                </tr>
+            </tbody>
+        </table>
+
+        foreach (var question in sect.Questions.Where(x => x.Answer.HasAnswerValues || x.Answer.HasRowHeaderValues))
+        {
+            <table class="nobreak">
+                <tbody>
+                    @if (!question.IsFreeText)
+                    {
+                        if (question.Answer.IsSimpleAnswer && question.Answer.HasAnswerValues)
+                        {
+                            <tr>
+                                <th>
+                                    @*<span class="question-number">@question.Number</span>*@
+                                    @Raw(question.Title.FormatBreaks())
+                                    @*<span class="hint">@Raw(question.Hint.FormatBreaks())</span>*@
+                                </th>
+                            </tr>
+                            if (question.Answer.HasAnswerValues)
+                            {
+                                <tr>
+                                    <td>@Raw(question.Answer.FirstAnswer.FormatBreaks())</td>
+                                </tr>
+                            }
+                            else if (question.Answer.HasRowHeaderValues) // don't write a row for free-standing hints
+                            {
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            }
+                        }
+
+                        else if (question.Answer.HasAnswerValues) // a multicolumn or matrix answer
+                        {
+                            <tr>
+                                <th colspan="@question.Answer.CellCount">
+                                    @*<span class="question-number">@question.Number</span>*@
+                                    @Raw(question.Title.FormatBreaks())
+                                    @*<span class="hint">@Raw(question.Hint.FormatBreaks())</span>*@
+                                    @*<span class="hint">@Raw(question.OtherText.FormatBreaks())</span>*@
+                                </th>
+                            </tr>
+
+                            <tr>
+                                @if (question.Answer.HasRowHeaderValues)
+                                {
+                                    <th>@question.Answer.Header.Cells.First()</th>
+                                }
+                                @foreach (var col in question.Answer.Header.Cells.Skip(1))
+                                {
+                                    <th>@col</th>
+                                }
+                            </tr>
+
+                            foreach (var row in question.Answer.Rows)
+                            {
+                                <tr>
+                                    @if (question.Answer.HasRowHeaderValues)
+                                    {
+                                        <th>@row.Cells.First()</th>
+                                    }
+                                    @foreach (var answer in row.Cells.Skip(1))
+                                    {
+                                        <td>@Raw(answer.FormatBreaks())</td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+    }
+    <table class="nobreak">
+        <tbody>
+            <tr>
+                <th class="footer">Archived from Eclipse @DateTime.Now.ToFormattedDateTime()</th>
+            </tr>
+        </tbody>
+    </table>
+</div>
